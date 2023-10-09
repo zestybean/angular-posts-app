@@ -6,10 +6,10 @@ const Post = require("./models/post");
 
 const app = express();
 
+require("dotenv").config();
+
 mongoose
-  .connect(
-    "mongodb+srv://ng-admin:pxt805W2KrY7we0e@cluster0.zvalrqw.mongodb.net/node-angular?retryWrites=true&w=majority"
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to database!");
   })
