@@ -2,7 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const Post = require("./models/post");
+const postsRoutes = require("./routes/posts");
 
 const app = express();
 
@@ -31,41 +31,11 @@ app.use((req, res, next) => {
   );
   res.setHeader(
     "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, DELETE, OPTIONS"
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
   );
   next();
 });
 
-app.post("/api/posts", (req, res, next) => {
-  const post = new Post({
-    title: req.body.title, // This is the title that will be returned.
-    content: req.body.content, // This is the content that will be returned.
-  });
-  post.save().then((createdPost) => {
-    res.status(201).json({
-      message: "Post added successfully",
-      postId: createdPost._id, // This is the message that will be returned.
-    });
-  }); // This saves the post to the database.
-});
-
-app.get("/api/posts", (req, res, next) => {
-  Post.find().then((documents) => {
-    // This is a Mongoose method that fetches all the documents from the database.
-    console.log(documents);
-    res.status(200).json({
-      // This returns the documents as a JSON response.
-      message: "Posts fetched successfully!", // This is the message that will be returned.
-      posts: documents, // This is the posts that will be returned.
-    });
-  });
-});
-
-app.delete("/api/posts/:id", (req, res, next) => {
-  Post.deleteOne({ _id: req.params.id }).then((result) => {
-    console.log(result); // This logs the result to the console.
-    res.status(200).json({ message: "Post deleted!" }); // This is the message that will be returned.
-  });
-});
+app.use("/api/posts", postsRoutes);
 
 module.exports = app;

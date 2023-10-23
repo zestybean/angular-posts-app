@@ -12,6 +12,7 @@ import { Post } from '../post.model';
 export class PostCreateComponent implements OnInit {
   enteredTitle = '';
   enteredContent = '';
+  isLoading = false;
   post: Post;
   private mode = 'create';
   private postId: string;
@@ -24,9 +25,17 @@ export class PostCreateComponent implements OnInit {
   ngOnInit() {
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('postId')) {
-        this.mode = 'edit';
+        this.mode = 'edit'; // set the mode to edit
         this.postId = paramMap.get('postId'); // get the postId from the url
-        this.post = this.postsService.getPost(this.postId); // get the post from the service
+        this.isLoading = true;
+        this.postsService.getPost(this.postId).subscribe((postData) => {
+          this.isLoading = false;
+          this.post = {
+            id: postData._id,
+            title: postData.title,
+            content: postData.content,
+          }; // set the post to the post returned by getPost()
+        });
       } else {
         this.mode = 'create';
         this.postId = null;
@@ -34,12 +43,20 @@ export class PostCreateComponent implements OnInit {
     });
   }
 
-  onAddPost(form: NgForm) {
+  onSavePost(form: NgForm) {
     if (form.invalid) {
       return;
     }
-
-    this.postsService.addPost(form.value.title, form.value.content);
+    this.isLoading = true; // set isLoading to true
+    if (this.mode === 'create') {
+      this.postsService.addPost(form.value.title, form.value.content);
+    } else {
+      this.postsService.updatePost(
+        this.postId,
+        form.value.title,
+        form.value.content
+      );
+    }
     form.resetForm();
   }
 }
