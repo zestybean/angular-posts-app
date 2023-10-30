@@ -1,10 +1,35 @@
 const express = require("express");
+const multer = require("multer"); // This is a package that allows us to extract files from incoming requests.
 
 const Post = require("../models/post");
 
 const router = express.Router();
 
-router.post("", (req, res, next) => {
+const MIME_TYPE_MAP = {
+  "image/png": "png", // This is the MIME type for PNG images.
+  "image/jpeg": "jpg", // This is the MIME type for JPEG images.
+  "image/jpg": "jpg", // This is the MIME type for JPG images.
+};
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const isValid = MIME_TYPE_MAP[file.mimetype]; // This checks if the MIME type is valid.
+
+    let error = new Error("Invalid mime type");
+    if (isValid) {
+      error = null;
+    }
+
+    cb(error, "backend/images"); // This is the path where the files will be stored.
+  },
+  filename: (req, file, cb) => {
+    const name = file.originalname.toLowerCase().split(" ").join("-"); // This is the name of the file.
+    const ext = MIME_TYPE_MAP[file.mimetype]; // This is the extension of the file.
+    cb(null, name + "-" + Date.now() + "." + ext); // This is the full name of the file.
+  },
+}); // This is a configuration object that tells multer where to store the files.
+
+router.post("", multer(storage).single("image"), (req, res, next) => {
   const post = new Post({
     title: req.body.title, // This is the title that will be returned.
     content: req.body.content, // This is the content that will be returned.
