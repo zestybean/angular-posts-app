@@ -42,10 +42,12 @@ router.post(
     post.save().then((createdPost) => {
       res.status(201).json({
         message: "Post added successfully",
-        postId: createdPost._id, // This is the message that will be returned.
-        title: createdPost.title, // This is the title that will be returned.
-        content: createdPost.content, // This is the content that will be returned.
-        imagePath: createdPost.imagePath, // This is the image path that will be returned.
+        post: {
+          id: createdPost._id, // This is the message that will be returned.
+          title: createdPost.title, // This is the title that will be returned.
+          content: createdPost.content, // This is the content that will be returned.
+          imagePath: createdPost.imagePath, // This is the image path that will be returned.
+        },
       });
     }); // This saves the post to the database.
   }
