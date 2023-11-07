@@ -29,30 +29,49 @@ const storage = multer.diskStorage({
   },
 }); // This is a configuration object that tells multer where to store the files.
 
-router.post("", multer(storage).single("image"), (req, res, next) => {
-  const post = new Post({
-    title: req.body.title, // This is the title that will be returned.
-    content: req.body.content, // This is the content that will be returned.
-  });
-  post.save().then((createdPost) => {
-    res.status(201).json({
-      message: "Post added successfully",
-      postId: createdPost._id, // This is the message that will be returned.
+router.post(
+  "",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    const url = req.protocol + "://" + req.get("host"); // This is the URL of the server.
+    const post = new Post({
+      title: req.body.title, // This is the title that will be returned.
+      content: req.body.content, // This is the content that will be returned.
+      imagePath: url + "/images/" + req.file.filename, // This is the image path that will be returned.
     });
-  }); // This saves the post to the database.
-});
+    post.save().then((createdPost) => {
+      res.status(201).json({
+        message: "Post added successfully",
+        postId: createdPost._id, // This is the message that will be returned.
+        title: createdPost.title, // This is the title that will be returned.
+        content: createdPost.content, // This is the content that will be returned.
+        imagePath: createdPost.imagePath, // This is the image path that will be returned.
+      });
+    }); // This saves the post to the database.
+  }
+);
 
-router.put("/:id", (req, res, next) => {
-  const post = new Post({
-    _id: req.body.id, // This is the ID that will be returned.
-    title: req.body.title, // This is the title that will be returned.
-    content: req.body.content, // This is the content that will be returned.
-  });
-
-  Post.updateOne({ _id: req.params.id }, post).then((result) => {
-    res.status(200).json({ message: "Update successful!" }); // This is the message that will be returned.
-  });
-});
+router.put(
+  "/:id",
+  multer({ storage: storage }).single("image"),
+  (req, res, next) => {
+    let imagePath = req.body.imagePath;
+    if (req.file) {
+      const url = req.protocol + "://" + req.get("host");
+      imagePath = url + "/images/" + req.file.filename;
+    }
+    const post = new Post({
+      _id: req.body.id,
+      title: req.body.title,
+      content: req.body.content,
+      imagePath: imagePath,
+    });
+    console.log(post);
+    Post.updateOne({ _id: req.params.id }, post).then((result) => {
+      res.status(200).json({ message: "Update successful!" });
+    });
+  }
+);
 
 router.get("", (req, res, next) => {
   Post.find().then((documents) => {

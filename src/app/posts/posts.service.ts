@@ -22,6 +22,7 @@ export class PostsService {
               title: post.title,
               content: post.content,
               id: post._id,
+              imagePath: post.imagePath,
             };
           });
         })
@@ -37,39 +38,73 @@ export class PostsService {
   }
 
   getPost(id: string) {
-    return this.http.get<{ _id: string; title: string; content: string }>(
-      'http://localhost:3000/api/posts/' + id
-    );
+    return this.http.get<{
+      _id: string;
+      title: string;
+      content: string;
+      imagePath: string;
+    }>('http://localhost:3000/api/posts/' + id);
   }
 
-  addPost(title: string, content: string) {
-    const post: Post = { id: null, title: title, content: content };
+  addPost(title: string, content: string, image: File) {
+    const postData = new FormData(); // create a new FormData object
+    postData.append('title', title); // append the title
+    postData.append('content', content); // append the content
+    postData.append('image', image, title); // append the image
     this.http
-      .post<{ message: string; postId: string }>( // specify the type of the response data
+      .post<{ message: string; post: Post }>( // specify the type of the response data
         'http://localhost:3000/api/posts',
-        post
+        postData
       ) // send a POST request
       .subscribe((responseData) => {
-        const postId = responseData.postId; // get the id of the post
-        post.id = postId; // update the id of the post
+        const post: Post = {
+          id: responseData.post.id,
+          title: responseData.post.title,
+          content: responseData.post.content,
+          imagePath: responseData.post.imagePath,
+        };
         this.posts.push(post);
         this.postsUpdated.next([...this.posts]); // emit a new value
         this.router.navigate(['/']); // navigate to the root route
       });
   }
 
-  updatePost(id: string, title: string, content: string) {
-    const post: Post = { id: id, title: title, content: content }; // create a new post
+  updatePost(id: string, title: string, content: string, image: File | string) {
+    let postData: Post | FormData;
+
+    if (typeof image === 'object') {
+      // if the image is a File
+      postData = new FormData(); // create a new FormData object
+      postData.append('id', id); // append the id
+      postData.append('title', title); // append the title
+      postData.append('content', content); // append the content
+      postData.append('image', image, title); // append the image
+    } else {
+      // if the image is a string
+      postData = {
+        id: id,
+        title: title,
+        content: content,
+        imagePath: image,
+      };
+    }
+
     this.http
-      .put('http://localhost:3000/api/posts/' + id, post)
+      .put('http://localhost:3000/api/posts/' + id, postData) // send a PUT request
       .subscribe((response) => {
         const updatedPosts = [...this.posts]; // copy the posts array
-        const oldPostIndex = updatedPosts.findIndex((p) => p.id === post.id); // find the index of the post with the given id
-        updatedPosts[oldPostIndex] = post; // update the post at the given index
+        const oldPostIndex = updatedPosts.findIndex((p) => p.id === id); // find the index of the post with the given id
+        const post: Post = {
+          id: id,
+          title: title,
+          content: content,
+          imagePath: '',
+        };
+        updatedPosts[oldPostIndex] = post; // update the post
         this.posts = updatedPosts; // update the posts array
         this.postsUpdated.next([...this.posts]); // emit a new value
         this.router.navigate(['/']); // navigate to the root route
-      }); // send a PUT request
+      });
   }
 
   deletePost(postId: string) {
