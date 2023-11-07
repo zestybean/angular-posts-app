@@ -1,14 +1,21 @@
 <div *ngIf="isLoading">Spinner</div>
 <div multi="true" *ngIf="posts.length > 0 && !isLoading">
-  <div *ngFor="let post of posts">
-    <div>{{ post.title }}</div>
-    <div>
-      <img [src]="post.imagePath" [alt]="post.title" />
-    </div>
-    <p>{{ post.content }}</p>
-    <div>
-      <a [routerLink]="['/edit', post.id]">✎ EDIT</a>
-      <button (click)="onDelete(post.id)">☠ DELETE</button>
+  <div
+    *ngFor="let post of posts"
+    class="flex flex-wrap justify-center items-center"
+  >
+    <div class="w-full sm:w-1/2 md:w-1/3 lg:w-1/4 p-4">
+      <div class="bg-blue-200 rounded-lg shadow-md">
+        <div>{{ post.title }}</div>
+        <div>
+          <img [src]="post.imagePath" [alt]="post.title" />
+        </div>
+        <p>{{ post.content }}</p>
+        <div>
+          <a [routerLink]="['/edit', post.id]">✎ EDIT</a>
+          <button (click)="onDelete(post.id)">☠ DELETE</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>

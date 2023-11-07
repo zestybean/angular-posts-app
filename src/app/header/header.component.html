@@ -1,8 +1,15 @@
-<span><a routerLink="/">🧑‍🚀 The Feed</a></span>
+<nav class="bg-blue-500 p-4">
+  <div class="container mx-auto flex items-center justify-between">
+    <a routerLink="/" class="text-white text-xl font-semibold">🧑‍🚀 The Feed</a>
 
-<ul>
-  <li>Hello</li>
-  <li>
-    <a mat-button routerLink="/create" routerLinkActive="mat-error">CREATE</a>
-  </li>
-</ul>
+    <div class="space-x-4">
+      <a
+        mat-button
+        routerLink="/create"
+        routerLinkActive="mat-error"
+        class="text-white hover:text-yellow-500 transition duration-300 ease-in-out"
+        >CREATE</a
+      >
+    </div>
+  </div>
+</nav>
