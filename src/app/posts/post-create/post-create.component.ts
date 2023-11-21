@@ -8,7 +8,6 @@ import { mimeType } from './mime-type.validator'; // import the mimeType validat
 @Component({
   selector: 'app-post-create',
   templateUrl: './post-create.component.html',
-  styleUrls: ['./post-create.component.css'],
 })
 export class PostCreateComponent implements OnInit {
   enteredTitle = '';
@@ -55,8 +54,6 @@ export class PostCreateComponent implements OnInit {
         this.isLoading = true;
         this.postsService.getPost(this.postId).subscribe((postData) => {
           this.isLoading = false;
-          console.log(postData);
-
           this.post = {
             id: postData._id,
             title: postData.title,

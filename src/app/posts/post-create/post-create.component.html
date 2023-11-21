@@ -1,40 +1,105 @@
-<div *ngIf="isLoading">Spinner</div>
+<div *ngIf="isLoading" class="flex items-center justify-center min-h-screen">
+  <div
+    class="spinner border-t-4 border-blue-500 border-solid h-12 w-12 rounded-full animate-spin"
+  ></div>
+</div>
 
-<div>New Post:</div>
+<div class="flex items-start justify-center h-screen" *ngIf="!isLoading">
+  <div
+    class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4 w-full sm:w-1/2 md:w-1/2 lg:w-1/2"
+  >
+    <form [formGroup]="form" (submit)="onSavePost()">
+      <div class="mb-4">
+        <label class="block text-gray-700 text-2xl font-bold mb-2" for="title">
+          Post Title
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="title"
+          formControlName="title"
+          placeholder="Post Title"
+        />
+        <div
+          *ngIf="form.get('title').invalid"
+          class="text-red-600 py-2 text-sm mb-4"
+        >
+          Please enter a post title.
+        </div>
+      </div>
 
-<form [formGroup]="form" (submit)="onSavePost()" *ngIf="!isLoading">
-  <div>Post Title</div>
-  <input id="title" formControlName="title" placeholder="Post Title" />
-  <div *ngIf="form.get('title').invalid">Please enter a post title.</div>
+      <div>
+        <div>
+          <button
+            type="button"
+            (click)="filePicker.click()"
+            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outlines"
+          >
+            🌅 Pick Image
+          </button>
+          <input
+            class="hidden display-none"
+            type="file"
+            #filePicker
+            (change)="onImagePicked($event)"
+          />
+        </div>
 
-  <div>
-    <button type="button" (click)="filePicker.click()">🌅 Pick Image</button>
-    <input
-      class="HIDE ME"
-      type="file"
-      #filePicker
-      (change)="onImagePicked($event)"
-    />
+        <div
+          *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid"
+          class="mt-4 mb-4"
+        >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Image Preview
+          </label>
+          <img [src]="imagePreview" alt="form.value.title" />
+        </div>
+
+        <div
+          *ngIf="form.get('image').invalid"
+          class="text-red-600 text-sm mb-4"
+        >
+          Please choose a correct file type JPG, JPEG, or PNG.
+        </div>
+      </div>
+
+      <div class="mb-6">
+        <label
+          class="block text-gray-700 text-2xl font-bold mb-2"
+          for="content"
+        >
+          Post Content
+        </label>
+        <textarea
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="content"
+          rows="6"
+          formControlName="content"
+          placeholder="Post Content"
+        >
+        </textarea>
+        <div
+          *ngIf="form.get('content').invalid"
+          class="text-red-600 text-sm mb-4"
+        >
+          Please enter some content.
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <button
+          routerLink="/"
+          class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800"
+          type="cancel"
+        >
+          Cancel
+        </button>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outlines"
+          type="submit"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
   </div>
-
-  <div *ngIf="imagePreview !== '' && imagePreview && form.get('image').valid">
-    <img [src]="imagePreview" alt="form.value.title" />
-  </div>
-
-  <div *ngIf="form.get('image').invalid">
-    Please choose a correct file type JPG, JPEG, or PNG.
-  </div>
-
-  <div>
-    <div>Post Content</div>
-    <textarea
-      rows="6"
-      formControlName="content"
-      placeholder="Post Content"
-    ></textarea>
-    <div *ngIf="form.get('content').invalid">Please enter some content.</div>
-  </div>
-  <div>
-    <button color="primary" type="submit">Save Post</button>
-  </div>
-</form>
+</div>
