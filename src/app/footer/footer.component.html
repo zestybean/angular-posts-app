@@ -1,0 +1,41 @@
+<footer class="bg-gray-800 text-white p-4">
+  <div class="container mx-auto text-center" *ngIf="pageSizeOptions.length > 0">
+    Total Posts: {{ totalPosts }} | Posts Per Page: {{ postsPerPage }} |
+    <div>
+      <button
+        type="button"
+        (click)="toggleDropdown()"
+        class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:border-blue-300 focus:ring focus:ring-blue-200 active:bg-gray-100 active:text-gray-800 transition ease-in-out duration-150"
+      >
+        Page Size
+        <svg
+          [class.rotate180]="dropdownOpen"
+          class="-mr-1 ml-2 h-5 w-5 transition-transform transform"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 12l-8-8 1.5-1.5L10 9l6.5-6.5L18 4l-8 8z"
+            clip-rule="evenodd"
+          />
+        </svg>
+      </button>
+    </div>
+    <div
+      *ngIf="dropdownOpen"
+      class="origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 divide-y divide-gray-100"
+    >
+      <div class="py-1">
+        <a
+          *ngFor="let pageSize of pageSizeOptions"
+          href="#"
+          (click)="toggleDropdown()"
+          class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+          >{{ pageSize }}</a
+        >
+      </div>
+    </div>
+  </div>
+</footer>

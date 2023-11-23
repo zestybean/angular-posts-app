@@ -4,6 +4,8 @@ import { Subscription } from 'rxjs';
 import { Post } from '../post.model';
 import { PostsService } from '../posts.service';
 
+import { FooterComponent } from 'src/app/footer/footer.component';
+
 @Component({
   selector: 'app-post-list',
   templateUrl: './post-list.component.html',
@@ -17,6 +19,10 @@ export class PostListComponent implements OnInit {
   posts: Post[] = [];
   private postsSub: Subscription;
   isLoading = false;
+  totalPosts = 10;
+  postsPerPage = 2;
+  pageSizeOptions = [1, 2, 5, 10];
+  dropdownOpen = false;
 
   constructor(public postsService: PostsService) {}
 
